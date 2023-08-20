@@ -1,0 +1,10 @@
+.idea/
+.vscode/
+/coverage/
+/data/*
+/vendor/
+/logs/*
+/var/doctrine/*
+!/logs/README.md
+.phpunit.result.cache
+.env

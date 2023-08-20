@@ -1,0 +1,736 @@
+openapi: 3.0.0
+info:
+  title: 'Fonter api'
+  version: '1.0'
+paths:
+  /api/auth:
+    get:
+      tags:
+        - Users
+      parameters:
+        -
+          name: Authorization
+          in: header
+          description: 'Bearer JWT token'
+          required: true
+          schema:
+            type: string
+          example: 'Bearer token'
+      responses:
+        '200':
+          description: 'an OK response'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User200Response'
+        '403':
+          description: 'Wrong access rights exception'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/403Response'
+    post:
+      tags:
+        - Auth
+      parameters:
+        -
+          name: email
+          in: query
+          required: true
+          schema:
+            type: string
+        -
+          name: password
+          in: query
+          required: true
+          schema:
+            type: string
+            maxLength: 64
+            minLength: 8
+      responses:
+        '200':
+          description: 'an OK response'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Auth200Response'
+        '401':
+          description: 'Wrong Login/Password response'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/400Response'
+        '400':
+          description: 'Validation errors response'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Validation400Response'
+        '403':
+          description: 'Wrong access rights exception'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/403Response'
+  '/api/fonts/{id}':
+    get:
+      tags:
+        - Fonts
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '404':
+          description: 'Font not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/400Response'
+        '403':
+          description: 'Font not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/403Response'
+        '200':
+          description: 'An OK response'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Font'
+    delete:
+      tags:
+        - Fonts
+      parameters:
+        -
+          name: Authorization
+          in: header
+          description: 'Bearer JWT token'
+          required: true
+          schema:
+            type: string
+          example: 'Bearer token'
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '404':
+          description: 'Font not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/400Response'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/403Response'
+        '204':
+          description: 'An OK response'
+        '500':
+          description: 'Some error when deleting font'
+    patch:
+      tags:
+        - Fonts
+      parameters:
+        -
+          name: Authorization
+          in: header
+          description: 'Bearer JWT token'
+          required: true
+          schema:
+            type: string
+          example: 'Bearer token'
+        -
+          name: id
+          in: path
+          description: 'Id шрифта'
+          required: true
+          schema:
+            type: integer
+        -
+          name: tags
+          in: query
+          description: 'Тэги для шрифта'
+          required: false
+          schema:
+            type: array
+            items: {  }
+        -
+          name: file
+          in: query
+          description: 'Id файла для шрифта'
+          required: false
+          schema:
+            type: integer
+      responses:
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/403Response'
+        '404':
+          description: 'Font not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/400Response'
+        '200':
+          description: 'An OK response'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Font'
+  /api/fonts:
+    get:
+      tags:
+        - Fonts
+      parameters:
+        -
+          name: tags
+          in: query
+          description: 'tags to filter by'
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+        -
+          name: name
+          in: query
+          description: 'part of a name to filter by'
+          required: false
+          schema:
+            type: string
+        -
+          name: size
+          in: query
+          description: 'size of a page'
+          required: false
+          schema:
+            type: integer
+        -
+          name: offset
+          in: query
+          description: 'offset of a page'
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 'An OK response'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FontsCollection'
+    post:
+      tags:
+        - Fonts
+      parameters:
+        -
+          name: Authorization
+          in: header
+          description: 'Bearer JWT token'
+          required: true
+          schema:
+            type: string
+          example: 'Bearer token'
+        -
+          name: tags
+          in: query
+          description: 'Тэги для шрифта'
+          required: true
+          schema:
+            type: array
+            items: {  }
+        -
+          name: file
+          in: query
+          description: 'Id файла для шрифта'
+          required: true
+          schema:
+            type: integer
+      responses:
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/403Response'
+        '200':
+          description: 'An OK response'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Font'
+  '/api/logotypes/{id}':
+    get:
+      tags:
+        - Logotypes
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '404':
+          description: 'Logotype not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/400Response'
+        '403':
+          description: 'Logotype not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/403Response'
+        '200':
+          description: 'An OK response'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Logotype'
+    delete:
+      tags:
+        - Logotypes
+      parameters:
+        -
+          name: Authorization
+          in: header
+          description: 'Bearer JWT token'
+          required: true
+          schema:
+            type: string
+          example: 'Bearer token'
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '404':
+          description: 'Logotype not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/400Response'
+        '204':
+          description: 'An OK response'
+        '500':
+          description: 'Some error when deleting font'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/403Response'
+    patch:
+      tags:
+        - Logotypes
+      parameters:
+        -
+          name: Authorization
+          in: header
+          description: 'Bearer JWT token'
+          required: true
+          schema:
+            type: string
+          example: 'Bearer token'
+        -
+          name: id
+          in: path
+          description: 'Id логотипа'
+          required: true
+          schema:
+            type: integer
+        -
+          name: tags
+          in: query
+          description: 'Тэги для логотипа'
+          required: true
+          schema:
+            type: array
+            items: {  }
+        -
+          name: file
+          in: query
+          description: 'Id файла логотипа'
+          required: false
+          schema:
+            type: integer
+        -
+          name: cover
+          in: query
+          description: 'Id файла обложки логотипа'
+          required: false
+          schema:
+            type: integer
+        -
+          name: name
+          in: query
+          description: 'Название логотипа'
+          required: false
+          schema:
+            type: string
+      responses:
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/403Response'
+        '404':
+          description: 'Logotype not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/400Response'
+        '200':
+          description: 'An OK response'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Logotype'
+  /api/logotypes:
+    get:
+      tags:
+        - Logotypes
+      parameters:
+        -
+          name: tags
+          in: query
+          description: 'tags to filter by'
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+        -
+          name: name
+          in: query
+          description: 'part of a name to filter by'
+          required: false
+          schema:
+            type: string
+        -
+          name: size
+          in: query
+          description: 'size of a page'
+          required: false
+          schema:
+            type: integer
+        -
+          name: offset
+          in: query
+          description: 'offset of a page'
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 'An OK response'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogotypesCollection'
+    post:
+      tags:
+        - Logotypes
+      parameters:
+        -
+          name: Authorization
+          in: header
+          description: 'Bearer JWT token'
+          required: true
+          schema:
+            type: string
+          example: 'Bearer token'
+        -
+          name: tags
+          in: query
+          description: 'Тэги для шрифта'
+          required: true
+          schema:
+            type: array
+            items: {  }
+        -
+          name: file
+          in: query
+          description: 'Id файла логотипа'
+          required: true
+          schema:
+            type: integer
+        -
+          name: cover
+          in: query
+          description: 'Id файла обложки логотипа'
+          required: true
+          schema:
+            type: integer
+        -
+          name: name
+          in: query
+          description: 'Название логотипа'
+          required: true
+          schema:
+            type: string
+      responses:
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/403Response'
+        '200':
+          description: 'An OK response'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Logotype'
+  '/api/download/{url}':
+    get:
+      tags:
+        - Media
+      parameters:
+        -
+          name: url
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '404':
+          description: 'Media not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/400Response'
+        '200':
+          description: 'An OK response'
+          headers:
+            Content-Disposition:
+              schema:
+                type: string
+            Content-Type:
+              schema:
+                type: string
+            Content-Length:
+              schema:
+                type: integer
+          content:
+            '':
+              schema:
+                type: string
+                format: binary
+  /api/media:
+    post:
+      tags:
+        - Media
+      parameters:
+        -
+          name: rootDirectory
+          in: query
+          required: true
+          schema:
+            type: string
+        -
+          name: media
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'An OK response'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostMediaResponse'
+  /api/users:
+    post:
+      tags:
+        - Users
+      parameters:
+        -
+          name: email
+          in: query
+          required: true
+          schema:
+            type: string
+        -
+          name: password
+          in: query
+          required: true
+          schema:
+            type: string
+            maxLength: 64
+            minLength: 8
+      responses:
+        '200':
+          description: 'an OK response'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Registration201Response'
+        '400':
+          description: 'Validation errors response'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/400Response'
+        '403':
+          description: 'Wrong access rights exception'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/403Response'
+components:
+  schemas:
+    Auth200Response:
+      properties:
+        message:
+          type: string
+        token:
+          type: string
+      type: object
+    400Response:
+      properties:
+        type:
+          type: string
+        description:
+          type: string
+      type: object
+    Validation400Response:
+      properties:
+        type:
+          type: string
+        description:
+          description: 'Описание ошибки'
+          type: array
+          items:
+            properties:
+              'Field name example':
+                description: 'Пример поля'
+                type: array
+                items: {  }
+            type: object
+      type: object
+    FontsCollection:
+      properties:
+        offset:
+          description: 'Отступ от начала коллекции'
+          type: integer
+        size:
+          description: 'Количество объектов коллекции'
+          type: integer
+        total:
+          description: 'Всего объектов'
+          type: integer
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Font'
+      type: object
+    LogotypesCollection:
+      properties:
+        offset:
+          description: 'Отступ от начала коллекции'
+          type: integer
+        size:
+          description: 'Количество объектов коллекции'
+          type: integer
+        total:
+          description: 'Всего объектов'
+          type: integer
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Logotype'
+      type: object
+    PostMediaResponse:
+      properties:
+        id:
+          type: integer
+      type: object
+    PostMediaRequest:
+      properties:
+        id:
+          type: integer
+      type: object
+    User200Response:
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        role:
+          type: string
+      type: object
+    403Response:
+      properties:
+        type:
+          type: string
+          example: Forbidden.
+        description:
+          type: string
+          example: 'You are not permitted to perform the requested operation.'
+        trace:
+          type: string
+          example: null
+      type: object
+    Registration201Response:
+      properties:
+        message:
+          type: string
+          example: 'Регистрация прошла успешно, проверьте почту туда было выслано сообщение для подтверждения'
+      type: object
+    Font:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        tags:
+          type: array
+          items: {  }
+        file:
+          type: string
+      type: object
+    Logotype:
+      properties:
+        id:
+          type: integer
+          nullable: true
+        name:
+          type: string
+        file:
+          type: string
+        cover:
+          type: string
+        tags:
+          type: array
+          items: {  }
+      type: object
+    User:
+      properties:
+        id:
+          type: integer
+          nullable: true
+        email:
+          type: string
+        role:
+          type: string
+      type: object
